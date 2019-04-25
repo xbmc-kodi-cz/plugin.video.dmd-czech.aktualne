@@ -63,28 +63,17 @@ def showErrorNotification(message):
 
 def fetchUrl(url, label):
 	logDbg("fetchUrl " + url + ", label:" + label)
-	#pDialog = xbmcgui.DialogProgress()
-	#pDialog.create(_dialogTitle_, label)
 	httpdata = ''	
 	try:
 		resp = urllib2.urlopen(url)
 		size = resp.info().getheader('Content-Length', 9000)
-		#count=0
 		for line in resp:
-			#if pDialog.iscanceled():
-				#resp.close()
-				#pDialog.close()
-				#return None
-			#count += len(line)
 			httpdata += line
-			#percentage = int((float(count)/float(size))*100)
-			#pDialog.update(percentage)
 	except:
 		httpdata = None
 		showErrorNotification(_lang_(30002))
 	finally:
-		resp.close()
-		#pDialog.close()	
+		resp.close()	
 	return httpdata
 
 def listItems(offset, urladd):
@@ -223,9 +212,6 @@ def addDir(name,url,mode):
     liz.setProperty( "Fanart_Image", "http://i0.cz/bbx/video/img/video/porad-d-page-" + urlfanart )
     ok=xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=liz,isFolder=True)
     return ok
-    
-    
-
 
 params=get_params()
 url=None
@@ -251,8 +237,6 @@ try:
         mode=int(params["mode"])
 except:
         pass
-
-
 
 if mode==None or url==None or len(url)<1:
     STATS("OBSAH", "Function")
