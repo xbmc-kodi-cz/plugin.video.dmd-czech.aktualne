@@ -8,7 +8,6 @@ import xbmcaddon
 import urllib
 import urllib2
 import re
-import HTMLParser
 import xml.etree.ElementTree as ET
 import email.utils as eut
 import time
@@ -21,14 +20,13 @@ _homepage_ = 'https://video.aktualne.cz/'
 _rssUrl_ = _homepage_+'rss/'
 
 _addon_ = xbmcaddon.Addon('plugin.video.dmd-czech.aktualne')
-_lang_   = _addon_.getLocalizedString
+_lang_  = _addon_.getLocalizedString
 _scriptname_ = _addon_.getAddonInfo('name')
 _UserAgent_ = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, lkodiazor Gecko) Chrome/52.0.2743.116 Safari/537.36'
 _quality_ = _addon_.getSetting('quality')
 home = _addon_.getAddonInfo('path')
 _icon_ = xbmc.translatePath(os.path.join(home, 'resources/media/ikona-aktualne-57x57.png'))
 _mediadir_ = xbmc.translatePath(os.path.join(home, 'resources/media/'))
-_htmlParser_ = HTMLParser.HTMLParser()
 
 def log(msg, level=xbmc.LOGDEBUG):
     if type(msg).__name__ == 'unicode':
@@ -53,7 +51,7 @@ def showErrorNotification(message):
 
 def fetchUrl(url, label):
     logDbg("fetchUrl " + url + ", label:" + label)
-    httpdata = ''   
+    httpdata = ''
     try:
         request = urllib2.Request(url, headers={'User-Agent': _UserAgent_,})
         resp = urllib2.urlopen(request)
