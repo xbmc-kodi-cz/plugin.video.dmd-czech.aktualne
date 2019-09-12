@@ -1,4 +1,4 @@
-# Video plugin for aktualne.cz (fork)
+# Video plugin for aktualne.cz
 
 This plugin adds support for online videos from czech website aktualne.cz.
 It is based on the code of Štěpán Ort for DVTV. Now DVTV is part of this plugin.

@@ -17,7 +17,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 _homepage_ = 'https://video.aktualne.cz/'
-_rssUrl_ = _homepage_+'rss/'
+_rssUrl_ = _homepage_+'rss'
 
 _addon_ = xbmcaddon.Addon('plugin.video.dmd-czech.aktualne')
 _lang_  = _addon_.getLocalizedString
@@ -49,8 +49,8 @@ def showNotification(message, icon):
 def showErrorNotification(message):
     showNotification(message, 'error')
 
-def fetchUrl(url, label):
-    logDbg("fetchUrl " + url + ", label:" + label)
+def fetchUrl(url):
+    logDbg("fetchUrl " + url)
     httpdata = ''
     try:
         request = urllib2.Request(url, headers={'User-Agent': _UserAgent_,})
@@ -58,16 +58,21 @@ def fetchUrl(url, label):
         httpdata = resp.read()
     except:
         httpdata = None
-        showErrorNotification(_lang_(30002))
+        showErrorNotification(_lang_(30001))
     finally:
         resp.close() 
     return httpdata
 
 def listItems(offset, urladd):
-    url = _rssUrl_ + urladd
+    if(urladd == 'latest'):
+        url = _rssUrl_
+    else:
+        url = _rssUrl_ +'/'+ urladd+'/'
+        
+    logDbg(urladd)
     if offset > 0:
         url += '?offset=' + str(offset)
-    rss = fetchUrl(url, _lang_(30003))
+    rss = fetchUrl(url)
     if (not rss):
         return
     root = ET.fromstring(rss)
@@ -89,8 +94,6 @@ def listItems(offset, urladd):
             for pos, value in enumerate(l[::-1]):
                 duration += int(value) * 60 ** pos
             li.addStreamInfo('video', {'duration': duration})
-        if subtype == 'playlist':
-            li.setLabel2('Playlist')
         li.setThumbnailImage(image)
         li.setIconImage(_icon_)
         li.setInfo('video', {'mediatype': 'episode', 'title': title, 'plot': description, 'premiered': date})       
@@ -100,13 +103,13 @@ def listItems(offset, urladd):
         if(dur):
             xbmcplugin.addDirectoryItem(handle=addon_handle, url=u, listitem=li)
     o = offset + 30 
-    u = sys.argv[0]+'?mode=1&url='+urllib.quote_plus(urladd.encode('utf-8'))+'/&offset='+urllib.quote_plus(str(o))
-    liNext = xbmcgui.ListItem(_lang_(30006))
+    u = sys.argv[0]+'?mode=1&url='+urllib.quote_plus(urladd.encode('utf-8'))+'&offset='+urllib.quote_plus(str(o))
+    liNext = xbmcgui.ListItem(_lang_(30003))
     xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=liNext,isFolder=True)    
     xbmcplugin.endOfDirectory(addon_handle)
 
 def playUrl(url):
-    httpdata = fetchUrl(url, _lang_(30004))
+    httpdata = fetchUrl(url)
     if (not httpdata):
         return
     if httpdata: 
@@ -117,7 +120,7 @@ def playUrl(url):
     try:
         detail = json.loads(videos)
     except ValueError:
-        showErrorNotification(_lang_(30005))
+        showErrorNotification(_lang_(30002))
         return
     if detail:
         pl=xbmc.PlayList(1)
@@ -133,7 +136,7 @@ def playUrl(url):
                 xbmc.PlayList(1).add(url, li)
                 xbmc.Player().play(pl)
     else:
-        showErrorNotification(_lang_(30005))
+        showErrorNotification(_lang_(30002))
 
 def get_params():
         param=[]
@@ -158,11 +161,13 @@ def listShows():
     con = urllib2.urlopen(request)
     data = con.read()
     con.close()
-
+    
+    addDir(_lang_(30004),'latest',1) 
+    
     match = re.compile('<h2 class="section-title"><a href="/(.+?)/">(.+?)</a></h2>', re.DOTALL).findall(data)
     if len(match) > 1:
         for url, name in match:
-            addDir(name,url,1)  
+            addDir(name,url,1)       
     xbmcplugin.endOfDirectory(addon_handle)
     
 def addDir(name,url,mode):
@@ -170,14 +175,13 @@ def addDir(name,url,mode):
     u=sys.argv[0]+"?url="+urllib.quote_plus(url.encode('utf-8'))+"&mode="+str(mode)+"&name="+urllib.quote_plus(name.encode('utf-8'))
     ok=True
     liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage='')   
-    liz.setInfo( type="Video", infoLabels={ "Title": name } )
+    liz.setInfo(type="Video", infoLabels={ "Title": name })
     ok=xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=liz,isFolder=True)
     return ok
 
 params=get_params()
 url=None
 name=None
-thumb=None
 mode=None
 offset=0
 
@@ -198,8 +202,6 @@ try:
         mode=int(params["mode"])
 except:
         pass
-
-
 
 if mode==None or url==None or len(url)<1:
     listShows()
