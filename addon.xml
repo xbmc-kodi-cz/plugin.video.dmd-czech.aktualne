@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.dmd-czech.aktualne" name="Aktuálně.cz" version="2.1.3" provider-name="Petr Čermák, Štěpán Ort, lama18">
+<addon id="plugin.video.dmd-czech.aktualne" name="Aktuálně.cz" version="2.1.3" provider-name="Petr Čermák, Štěpán Ort, wombat">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
