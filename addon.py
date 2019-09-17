@@ -77,12 +77,15 @@ def listItems(offset, urladd):
         return
     root = ET.fromstring(rss)
     for item in root.find('channel').findall('item'):
+        if item.find('category') is not None and urladd == 'latest':
+            title = '[B]'+item.find('category').text+'[/B] | '+item.find('title').text
+        else:
+            title = item.find('title').text
         link  = item.find('link').text
-        title = item.find('title').text
+        #title = item.find('title').text
         description = item.find('description').text
         contentEncoded = item.find('{http://purl.org/rss/1.0/modules/content/}encoded').text
         extra = item.find('{http://i0.cz/bbx/rss/}extra')
-        subtype = extra.get('subtype')
         dur = extra.get('duration')
         datetime = eut.parsedate(item.find('pubDate').text.strip())
         date = time.strftime('%d.%m.%Y', datetime)
