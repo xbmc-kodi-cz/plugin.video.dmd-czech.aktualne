@@ -12,9 +12,8 @@ import xml.etree.ElementTree as ET
 import email.utils as eut
 import time
 import json
-
-reload(sys)  
-sys.setdefaultencoding('utf-8')
+from bs4 import BeautifulSoup
+import requests
 
 _homepage_ = 'https://video.aktualne.cz/'
 _rssUrl_ = _homepage_+'rss'
@@ -23,9 +22,7 @@ _addon_ = xbmcaddon.Addon('plugin.video.aktualne.cz')
 _lang_  = _addon_.getLocalizedString
 _scriptname_ = _addon_.getAddonInfo('name')
 _UserAgent_ = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, lkodiazor Gecko) Chrome/52.0.2743.116 Safari/537.36'
-_quality_ = _addon_.getSetting('quality')
 home = _addon_.getAddonInfo('path')
-_mediadir_ = xbmc.translatePath(os.path.join(home, 'resources/media/'))
 
 def log(msg, level=xbmc.LOGDEBUG):
     if type(msg).__name__ == 'unicode':
@@ -119,6 +116,35 @@ def listItems(offset, urladd):
     xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=liNext,isFolder=True)
     
 def videoLink(url):
+
+    soup = BeautifulSoup(fetchUrl(url), 'html.parser')
+
+    title = soup.find("meta", property="og:description")
+    image = soup.find("meta", property="og:image")
+    pattern = re.compile('"MP4":(.+\])')
+    videos = soup.find("script", text=pattern)
+    
+    data = pattern.search(videos.text).group(1)
+    data = json.loads(data)
+    
+    stream_url=data[0]['src']
+    
+    if stream_url:
+        #for version in detail:
+            #stream_url = version['src']
+            #quality = version['label']
+
+            #if (quality == _quality_):
+        liz = xbmcgui.ListItem(label=title[u"content"])
+        liz = xbmcgui.ListItem(path=stream_url)
+        liz.setThumbnailImage(image[u"content"])
+        liz.setProperty("isPlayable", "true")
+        xbmcplugin.setResolvedUrl(handle=addon_handle, succeeded=True, listitem=liz)
+    else:
+        showErrorNotification(_lang_(30002))
+       
+    '''for content in videos:
+        stream_url=content['src']
     httpdata = fetchUrl(url)
     if (not httpdata):
         return
@@ -128,20 +154,8 @@ def videoLink(url):
         videos = re.search('"MP4":(.+\])', httpdata).group(1)
 
         detail = json.loads(videos)
-        
-    if detail:
-        for version in detail:
-            stream_url = version['src']
-            quality = version['label']
-
-            if (quality == _quality_):
-                liz = xbmcgui.ListItem(label=title)
-                liz = xbmcgui.ListItem(path=stream_url)
-                liz.setThumbnailImage(image)
-                liz.setProperty("isPlayable", "true")
-                xbmcplugin.setResolvedUrl(handle=addon_handle, succeeded=True, listitem=liz)
-    else:
-        showErrorNotification(_lang_(30002))
+    '''    
+   
     
 def addDir(name,url, mode):
     u=sys.argv[0]+"?url="+urllib.quote_plus(url.encode('utf-8'))+"&mode="+str(mode)+"&name="+urllib.quote_plus(name.encode('utf-8'))
