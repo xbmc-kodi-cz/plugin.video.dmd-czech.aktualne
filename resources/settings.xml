@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<settings>
-    <setting id="quality" type="labelenum" label="30000" values="180p|360p|480p|720p|1080p" default="1080p" />
-</settings>
