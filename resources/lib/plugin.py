@@ -39,7 +39,7 @@ def list_shows():
 @plugin.route('/get_list/<path:show_id>/<category>/<page>')
 def get_list(show_id, category, page):
     xbmcplugin.setContent(plugin.handle, 'episodes')
-    url = set_url(show_id, page)
+    url = _baseurl+'rss{0}?offset={1}'.format(show_id, page)
     listing = []
     count = 0
     root = ET.fromstring(get_page(url))
@@ -103,9 +103,6 @@ def root():
     
     xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
     xbmcplugin.endOfDirectory(plugin.handle)
-
-def set_url(show_id, page):
-    return _baseurl+'rss{0}?offset={1}'.format(show_id, page)
     
 def get_page(url):
     r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0'})
