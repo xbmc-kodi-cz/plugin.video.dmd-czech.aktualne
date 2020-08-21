@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.aktualne.cz" name="Aktuálně.cz" version="2.1.5" provider-name="Petr Čermák, Štěpán Ort, wombat">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.requests" />
-    <import addon="script.module.beautifulsoup4" />
-  </requires>
-  <extension point="xbmc.python.pluginsource" library="addon.py">
-    <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Aktuálně.cz</summary>
-    <description>Plugin to play videos from Aktualne.cz</description>
-    <description lang="cs">Aktuálně.cz - kompletní zpravodajství, zprávy z domova i ze světa</description>
-    <platform>all</platform>
-  </extension>
+<addon id="plugin.video.aktualne.cz" name="Aktuálně.cz" version="2.2.0" provider-name="wombat">
+    <requires>
+        <import addon="xbmc.python" version="2.26.0"/>
+        <import addon="script.module.requests" version="2.22.0"/>
+        <import addon="script.module.beautifulsoup4" version="4.6.2"/>
+        <import addon="script.module.routing" version="0.2.3"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="main.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en_GB">Aktuálně.cz</summary>
+        <summary lang="cs_CZ">Aktuálně.cz</summary>
+        <description lang="en_GB">Aktuálně.cz - kompletní zpravodajství, zprávy z domova i ze světa</description>
+        <description lang="cs_CZ">Aktuálně.cz - kompletní zpravodajství, zprávy z domova i ze světa</description>
+        <source>https://github.com/xbmc-kodi-cz/plugin.video.aktualne.cz</source>
+    <assets>
+        <icon>resources/icon-new.png</icon>
+    </assets>
+    <news>
+v2.2.0
+- Optimalizace kódu
+- HLS stream
+    </news>
+    </extension>
 </addon>

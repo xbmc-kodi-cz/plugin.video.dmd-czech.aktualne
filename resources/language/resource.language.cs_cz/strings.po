@@ -1,0 +1,29 @@
+# Kodi Media Center language file
+# Addon Name: Aktuálně.cz
+# Addon id: plugin.video.aktualne.cz
+# Addon Provider: wombat
+msgid ""
+msgstr ""
+
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: cs\n"
+
+msgctxt "#30001"
+msgid "Recent Videos"
+msgstr "Poslední videa"
+
+msgctxt "#30002"
+msgid "Shows"
+msgstr "Pořady"
+
+msgctxt "#30003"
+msgid "Next videos"
+msgstr "Další videa"
+
+msgctxt "#30004"
+msgid "Go to show"
+msgstr "Přejít na pořad"
+
+msgctxt "#30005"
+msgid "No stream found"
+msgstr "Žádný stream nenalezen"
