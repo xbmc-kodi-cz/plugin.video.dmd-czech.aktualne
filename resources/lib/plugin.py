@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import routing
-
 import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
-
 import re
 import time
 import datetime
