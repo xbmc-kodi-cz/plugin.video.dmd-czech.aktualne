@@ -41,7 +41,6 @@ def get_list():
     xbmcplugin.setContent(plugin.handle, 'episodes')
     show_id = plugin.args['show_id'][0] if 'show_id' in plugin.args else ''
     page = int(plugin.args['page'][0] if 'page' in plugin.args else 0)
-    print page
     category = int(plugin.args['category'][0] if 'category' in plugin.args else 0)
     url = _baseurl+'rss{0}?offset={1}'.format(show_id, page)
     listing = []
@@ -73,7 +72,6 @@ def get_list():
         list_item.addContextMenuItems(menuitems)
         listing.append((plugin.url_for(get_video, item.find('link').text), list_item, False))
         count +=1
-    print page
     if count>=30 and category != 1:
         list_item = xbmcgui.ListItem(label=_addon.getLocalizedString(30003))
         list_item.setArt({'icon': 'DefaultFolder.png'})
