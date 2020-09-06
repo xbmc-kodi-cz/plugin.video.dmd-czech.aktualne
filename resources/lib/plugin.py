@@ -7,7 +7,7 @@ import xbmcgui
 import xbmcplugin
 import re
 import time
-import datetime
+from dateutil import parser
 from bs4 import BeautifulSoup
 import requests
 import xml.etree.ElementTree as ET
@@ -55,7 +55,7 @@ def get_list():
             menuitems.append(( _addon.getLocalizedString(30004), 'XBMC.Container.Update('+plugin.url_for(get_list, show_id = show_id, category = 0, page = 0)+')' )) #get_list, '', 'recent', 0)
         thumb = re.compile('<img.+?src="([^"]*?)"').search(item.find('{http://purl.org/rss/1.0/modules/content/}encoded').text).group(1)
         desc = item.find('description').text
-        date = datetime.datetime(*(time.strptime(item.find('pubDate').text.strip()[:16], '%a, %d %b %Y')[:6])).strftime("%Y-%m-%d")
+        date = parser.parse(item.find('pubDate').text.strip()).strftime("%Y-%m-%d")
         dur = item.find('{http://i0.cz/bbx/rss/}extra').get('duration')
         if dur and ':' in dur:
             duration = 0
