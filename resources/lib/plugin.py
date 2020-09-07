@@ -57,8 +57,8 @@ def get_list():
         desc = item.find('description').text
         date = parser.parse(item.find('pubDate').text.strip()).strftime("%Y-%m-%d")
         dur = item.find('{http://i0.cz/bbx/rss/}extra').get('duration')
+        duration = 0
         if dur and ':' in dur:
-            duration = 0
             l = dur.strip().split(':')
             for pos, value in enumerate(l[::-1]):
                 duration += int(value) * 60 ** pos
