@@ -80,12 +80,17 @@ def get_list():
 @plugin.route('/get_video/<path:show_url>')
 def get_video(show_url):
     soup = BeautifulSoup(get_page(show_url), 'html.parser')
-    data = json.loads(re.compile('\"tracks\":(.+?),\"adverttime').findall(soup.get_text())[0])
-    if(data['HLS']):
-        stream_url = data['HLS'][0]['src']
-    else:
-        stream_url = data['MP4'][0]['src']
-        
+    data = json.loads(re.search(r'BBXPlayer.setup\(\s+(.*)', soup.get_text().encode('utf-8')).group(1))
+    try:
+        stream_url = data['plugins']['liveStarter']['tracks']['HLS'][0]['src']
+    except:
+        try:
+            if(data['tracks']['HLS']):
+                stream_url = data['tracks']['HLS'][0]['src']
+            else:
+                stream_url = data['tracks']['MP4'][0]['src']
+        except:
+            pass      
     list_item = xbmcgui.ListItem(path=stream_url)
     xbmcplugin.setResolvedUrl(plugin.handle, True, list_item)
 
