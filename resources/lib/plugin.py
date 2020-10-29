@@ -78,7 +78,7 @@ def get_list():
     xbmcplugin.endOfDirectory(plugin.handle)
     
 @plugin.route('/get_video/<path:show_url>')
-def get_video(show_url):    
+def get_video(show_url):
     soup = BeautifulSoup(get_page(show_url), 'html.parser')
     if soup.find('div', {'class':'embed-player'}):
         soup = BeautifulSoup(get_page(soup.find('div', {'class':'embed-player'}).find('a')['href']), 'html.parser')
