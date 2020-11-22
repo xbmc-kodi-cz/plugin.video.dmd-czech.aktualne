@@ -18,21 +18,21 @@ _addon = xbmcaddon.Addon()
 plugin = routing.Plugin()
 
 _baseurl = 'https://video.aktualne.cz/'
-   
+
 @plugin.route('/list_shows/')
 def list_shows():
     xbmcplugin.setContent(plugin.handle, 'tvshows')
     soup = BeautifulSoup(get_page(_baseurl), 'html.parser')
     listing = []
     for porad in soup.select('h2.section-title a'):
-        title = porad.text.encode('utf-8')            
+        title = porad.text
         list_item = xbmcgui.ListItem(title)
         list_item.setInfo('video', {'mediatype': 'tvshow', 'title': title})
         listing.append((plugin.url_for(get_list, show_id = porad['href'], category = 2, page = 0), list_item, True))
-        
+
     xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
     xbmcplugin.endOfDirectory(plugin.handle)
-    
+
 @plugin.route('/get_list/')
 def get_list():
     xbmcplugin.setContent(plugin.handle, 'episodes')
@@ -45,11 +45,11 @@ def get_list():
     root = ET.fromstring(get_page(url))
     for item in root.find('channel').findall('item'):
         menuitems = []
-        title = item.find('title').text.encode('utf-8')
+        title = item.find('title').text
         title_label = title
         show_title = re.compile('(.+?) -').search(root.find('.//channel/title').text).group(1)
         if category == 1:
-            show_title = item.find('category').text.encode('utf-8')
+            show_title = item.find('category').text
             title_label = '[COLOR blue]{0}[/COLOR] · {1}'.format(show_title, title)
             show_id = re.compile('\/\/.+?(\/.+?)\/').search(item.find('link').text).group(1)
             menuitems.append(( _addon.getLocalizedString(30004), 'XBMC.Container.Update('+plugin.url_for(get_list, show_id = show_id, category = 0, page = 0)+')' ))
@@ -73,16 +73,16 @@ def get_list():
         list_item = xbmcgui.ListItem(label=_addon.getLocalizedString(30003))
         list_item.setArt({'icon': 'DefaultFolder.png'})
         listing.append((plugin.url_for(get_list, show_id = show_id, category = category, page = page + 30), list_item, True))
-            
+
     xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
     xbmcplugin.endOfDirectory(plugin.handle)
-    
+
 @plugin.route('/get_video/<path:show_url>')
 def get_video(show_url):
     soup = BeautifulSoup(get_page(show_url), 'html.parser')
     if soup.find('div', {'class':'embed-player'}):
         soup = BeautifulSoup(get_page(soup.find('div', {'class':'embed-player'}).find('a')['href']), 'html.parser')
-    data = json.loads(re.search(r'BBXPlayer.setup\(\s+(.*)', soup.get_text().encode('utf-8')).group(1))
+    data = json.loads(re.search(r'BBXPlayer.setup\(\s+(.*)', soup.get_text()).group(1))
     try:
         stream_url = data['plugins']['liveStarter']['tracks']['HLS'][0]['src']
     except:
@@ -92,7 +92,7 @@ def get_video(show_url):
             else:
                 stream_url = data['tracks']['MP4'][0]['src']
         except:
-            pass      
+            pass
     list_item = xbmcgui.ListItem(path=stream_url)
     xbmcplugin.setResolvedUrl(plugin.handle, True, list_item)
 
@@ -102,18 +102,17 @@ def root():
     list_item = xbmcgui.ListItem(_addon.getLocalizedString(30001))
     list_item.setArt({'icon': 'DefaultRecentlyAddedEpisodes.png'})
     listing.append((plugin.url_for(get_list, show_id = '', category = 1, page = 0), list_item, True))
-    
+
     list_item = xbmcgui.ListItem(_addon.getLocalizedString(30002))
     list_item.setArt({'icon': 'DefaultTVShows.png'})
     listing.append((plugin.url_for(list_shows), list_item, True))
-    
+
     xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
     xbmcplugin.endOfDirectory(plugin.handle)
-    
+
 def get_page(url):
     r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0'})
     return r.content
-    
+
 def run():
     plugin.run()
-    
