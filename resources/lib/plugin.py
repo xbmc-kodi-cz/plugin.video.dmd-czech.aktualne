@@ -52,7 +52,7 @@ def get_list():
             show_title = item.find('category').text
             title_label = '[COLOR blue]{0}[/COLOR] · {1}'.format(show_title, title)
             show_id = re.compile('\/\/.+?(\/.+?)\/').search(item.find('link').text).group(1)
-            menuitems.append(( _addon.getLocalizedString(30004), 'XBMC.Container.Update('+plugin.url_for(get_list, show_id = show_id, category = 0, page = 0)+')' ))
+            menuitems.append(( _addon.getLocalizedString(30004), 'Container.Update('+plugin.url_for(get_list, show_id = show_id, category = 0, page = 0)+')' ))
         thumb = re.compile('<img.+?src="([^"]*?)"').search(item.find('{http://purl.org/rss/1.0/modules/content/}encoded').text).group(1)
         desc = item.find('description').text
         date = parser.parse(item.find('pubDate').text.strip()).strftime("%Y-%m-%d")
