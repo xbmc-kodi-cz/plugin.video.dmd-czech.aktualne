@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import routing
 import xbmc
 import xbmcaddon
@@ -39,7 +38,7 @@ def get_list():
     show_id = plugin.args['show_id'][0] if 'show_id' in plugin.args else ''
     page = int(plugin.args['page'][0] if 'page' in plugin.args else 0)
     category = int(plugin.args['category'][0] if 'category' in plugin.args else 0)
-    url = _baseurl+'rss{0}?offset={1}'.format(show_id, page)
+    url = _baseurl+'rss{0}/?offset={1}'.format(show_id, page)
     listing = []
     count = 0
     root = ET.fromstring(get_page(url))
@@ -69,6 +68,7 @@ def get_list():
         list_item.addContextMenuItems(menuitems)
         listing.append((plugin.url_for(get_video, item.find('link').text), list_item, False))
         count +=1
+        
     if count>=30 and category != 1:
         list_item = xbmcgui.ListItem(label=_addon.getLocalizedString(30003))
         list_item.setArt({'icon': 'DefaultFolder.png'})
@@ -80,9 +80,8 @@ def get_list():
 @plugin.route('/get_video/<path:show_url>')
 def get_video(show_url):
     soup = BeautifulSoup(get_page(show_url), 'html.parser')
-    if soup.find('div', {'class':'embed-player'}):
-        soup = BeautifulSoup(get_page(soup.find('div', {'class':'embed-player'}).find('a')['href']), 'html.parser')
-    data = json.loads(re.search(r'BBXPlayer.setup\(\s+(.*)', soup.get_text()).group(1))
+    data = json.loads(re.compile('BBXPlayer.setup\(\s+(.*)').findall(str(soup))[0])
+
     try:
         stream_url = data['plugins']['liveStarter']['tracks']['HLS'][0]['src']
     except:
@@ -99,9 +98,14 @@ def get_video(show_url):
 @plugin.route('/')
 def root():
     listing = []
+    
+    list_item = xbmcgui.ListItem(_addon.getLocalizedString(30006))
+    list_item.setArt({'icon': 'DefaultTVShows.png'})
+    listing.append((plugin.url_for(get_list, show_id = '/dvtv'), list_item, True))
+    
     list_item = xbmcgui.ListItem(_addon.getLocalizedString(30001))
     list_item.setArt({'icon': 'DefaultRecentlyAddedEpisodes.png'})
-    listing.append((plugin.url_for(get_list, show_id = '', category = 1, page = 0), list_item, True))
+    listing.append((plugin.url_for(get_list, category = 1), list_item, True))
 
     list_item = xbmcgui.ListItem(_addon.getLocalizedString(30002))
     list_item.setArt({'icon': 'DefaultTVShows.png'})
@@ -111,7 +115,7 @@ def root():
     xbmcplugin.endOfDirectory(plugin.handle)
 
 def get_page(url):
-    r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0'})
+    r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/85.0'})
     return r.content
 
 def run():
