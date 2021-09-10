@@ -80,9 +80,7 @@ def get_list():
 @plugin.route('/get_video/<path:show_url>')
 def get_video(show_url):
     soup = BeautifulSoup(get_page(show_url), 'html.parser')
-    if soup.find('div', {'class':'embed-player'}):
-        soup = BeautifulSoup(get_page(soup.find('div', {'class':'embed-player'}).find('a')['href']), 'html.parser')
-    data = json.loads(re.search(r'BBXPlayer.setup\(\s+(.*)', soup.get_text().encode('utf-8')).group(1))
+    data = json.loads(re.compile('BBXPlayer.setup\(\s+(.*)').findall(str(soup))[0])
     try:
         stream_url = data['plugins']['liveStarter']['tracks']['HLS'][0]['src']
     except:
