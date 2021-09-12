@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.aktualne.cz" name="Aktuálně.cz" version="2.3.2" provider-name="wombat">
+<addon id="plugin.video.aktualne.cz" name="Aktuálně.cz" version="2.3.3" provider-name="wombat">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.requests" version="2.22.0"/>
         <import addon="script.module.beautifulsoup4" version="4.6.2"/>
         <import addon="script.module.routing" version="0.2.3"/>
-		<import addon="script.module.dateutil" version="2.8.1"/>
+	<import addon="script.module.dateutil" version="2.8.1"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>video</provides>
@@ -20,7 +20,7 @@
     <assets>
         <icon>resources/icon.png</icon>
     </assets>
-    <news>Změny na webu
+    <news>embed-player fix (JimmyS83)
     </news>
     </extension>
 </addon>
