@@ -27,3 +27,8 @@ msgstr "Přejít na pořad"
 msgctxt "#30005"
 msgid "No stream found"
 msgstr "Žádný stream nenalezen"
+
+msgctxt "#30006"
+msgid "Spotlight"
+msgstr "Spotlight"
+
