@@ -27,3 +27,7 @@ msgstr ""
 msgctxt "#30005"
 msgid "No stream found"
 msgstr ""
+
+msgctxt "#30006"
+msgid "Spotlight"
+msgstr ""
