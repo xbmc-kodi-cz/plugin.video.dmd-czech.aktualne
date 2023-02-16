@@ -29,5 +29,5 @@ msgid "No stream found"
 msgstr ""
 
 msgctxt "#30006"
-msgid "DVTV"
+msgid "Spotlight"
 msgstr ""
