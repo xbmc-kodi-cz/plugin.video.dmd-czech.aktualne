@@ -33,8 +33,7 @@ def list_shows():
         title = porad['data-ga4-title']
         list_item = xbmcgui.ListItem(title)
         list_item.setInfo('video', {'mediatype': 'tvshow', 'title': title})
-        listing.append((plugin.url_for(
-            get_list, show_id=a.path, category=2, page=0), list_item, True))
+        listing.append((plugin.url_for(get_list, show_id=a.path, category=2, page=0), list_item, True))
 
     xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
     xbmcplugin.endOfDirectory(plugin.handle)
@@ -56,21 +55,17 @@ def get_list():
         menuitems = []
         title = item.find('title').text
         title_label = title
-        show_title = re.compile(
-            '(.+?) -').search(root.find('.//channel/title').text).group(1)
+        show_title = re.compile('(.+?) -').search(root.find('.//channel/title').text).group(1)
         if cat == 1:
-            show_title = item.find('category').text
-            title_label = '[COLOR blue]{0}[/COLOR] · {1}'.format(
-                show_title, title)
-            show_id = re.compile(
-                '\/\/.+?(\/.+?)\/').search(item.find('link').text).group(1)
-            menuitems.append((_addon.getLocalizedString(
-                30004), 'Container.Update('+plugin.url_for(get_list, show_id=show_id, category=0, page=0)+')'))
+            if item.find('category') is not None:
+                show_title = item.find('category').text
+            title_label = '[COLOR blue]{0}[/COLOR] · {1}'.format(show_title, title)
+            show_id = re.compile('\/\/.+?(\/.+?)\/').search(item.find('link').text).group(1)
+            menuitems.append((_addon.getLocalizedString(30004), 'Container.Update('+plugin.url_for(get_list, show_id=show_id, category=0, page=0)+')'))
         thumb = re.compile('<img.+?src="([^"]*?)"').search(
             item.find('{http://purl.org/rss/1.0/modules/content/}encoded').text).group(1)
         desc = item.find('description').text
-        date = parser.parse(
-            item.find('pubDate').text.strip()).strftime("%Y-%m-%d")
+        date = parser.parse(item.find('pubDate').text.strip()).strftime("%Y-%m-%d")
         dur = item.find('{http://i0.cz/bbx/rss/}extra').get('duration')
         duration = 0
         if dur and ':' in dur:
@@ -83,15 +78,13 @@ def get_list():
         list_item.setArt({'thumb': thumb})
         list_item.setProperty('IsPlayable', 'true')
         list_item.addContextMenuItems(menuitems)
-        listing.append(
-            (plugin.url_for(get_video, item.find('link').text), list_item, False))
+        listing.append((plugin.url_for(get_video, item.find('link').text), list_item, False))
         count += 1
 
-    if count >= 30:
+    if count > 30:
         list_item = xbmcgui.ListItem(label=_addon.getLocalizedString(30003))
         list_item.setArt({'icon': 'DefaultFolder.png'})
-        listing.append((plugin.url_for(get_list, show_id=show_id,
-                       category=cat, page=page + 30), list_item, True))
+        listing.append((plugin.url_for(get_list, show_id=show_id, category=cat, page=page + 30), list_item, True))
 
     xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
     xbmcplugin.endOfDirectory(plugin.handle)
@@ -103,8 +96,7 @@ def get_video(show_url):
     if soup.find('div', {'class': 'embed-player'}):
         soup = BeautifulSoup(get_page(
             soup.find('div', {'class': 'embed-player'}).find('a')['href']), 'html.parser')
-    data = json.loads(re.compile(
-        'BBXPlayer.setup\(\s+(.*)').findall(str(soup))[0])
+    data = json.loads(re.compile('BBXPlayer.setup\(\s+(.*)').findall(str(soup))[0])
 
     try:
         stream_url = data['plugins']['liveStarter']['tracks']['HLS'][0]['src']
@@ -124,11 +116,6 @@ def get_video(show_url):
 def root():
     listing = []
 
-    list_item = xbmcgui.ListItem(_addon.getLocalizedString(30006))
-    list_item.setArt({'icon': 'DefaultTVShows.png'})
-    listing.append(
-        (plugin.url_for(get_list, feed=2, show_id='/spotlight'), list_item, True))
-
     list_item = xbmcgui.ListItem(_addon.getLocalizedString(30001))
     list_item.setArt({'icon': 'DefaultRecentlyAddedEpisodes.png'})
     listing.append((plugin.url_for(get_list, category=1), list_item, True))
@@ -142,8 +129,7 @@ def root():
 
 
 def get_page(url):
-    r = requests.get(url, headers={
-                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'})
+    r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'})
     return r.content
 
 
