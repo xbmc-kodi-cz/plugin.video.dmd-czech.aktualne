@@ -57,7 +57,8 @@ def get_list():
         title_label = title
         show_title = re.compile('(.+?) -').search(root.find('.//channel/title').text).group(1)
         if cat == 1:
-            show_title = item.find('category').text.encode('utf-8')
+            if item.find('category') is not None:
+                show_title = item.find('category').text.encode('utf-8')
             title_label = '[COLOR blue]{0}[/COLOR] · {1}'.format(
                 show_title, title)
             show_id = re.compile('\/\/.+?(\/.+?)\/').search(item.find('link').text).group(1)
@@ -81,7 +82,7 @@ def get_list():
         listing.append((plugin.url_for(get_video, item.find('link').text), list_item, False))
         count += 1
 
-    if count >= 30:
+    if count > 30:
         list_item = xbmcgui.ListItem(label=_addon.getLocalizedString(30003))
         list_item.setArt({'icon': 'DefaultFolder.png'})
         listing.append((plugin.url_for(get_list, show_id=show_id, category=cat, page=page + 30), list_item, True))
@@ -115,11 +116,7 @@ def get_video(show_url):
 
 @plugin.route('/')
 def root():
-    listing = []
-    list_item = xbmcgui.ListItem(_addon.getLocalizedString(30006))
-    list_item.setArt({'icon': 'DefaultTVShows.png'})
-    listing.append((plugin.url_for(get_list, feed=2, show_id='/spotlight'), list_item, True))
-
+    listing = []    
     list_item = xbmcgui.ListItem(_addon.getLocalizedString(30001))
     list_item.setArt({'icon': 'DefaultRecentlyAddedEpisodes.png'})
     listing.append((plugin.url_for(get_list, category=1), list_item, True))
